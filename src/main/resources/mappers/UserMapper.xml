@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jaswine.uum.mapper.UserMapper">
+
+
+    <select id="getUserInfoByUsername" resultType="com.jaswine.commons.web.auth.pojo.AuthUser">
+        SELECT
+            t.id AS id,
+            t.username AS username,
+            t.password AS password,
+            t.nickname AS nickname,
+            t.account_enable AS accountEnable,
+            t.account_non_expired AS accountExpired,
+            t.credential_non_expired AS credentialExpired,
+            t.account_non_lock AS accountLock
+        FROM tb_user t WHERE username = #{username}
+    </select>
+    <select id="getUserInfoByUid" resultType="com.jaswine.uum.bean.vo.UserVO">
+        SELECT id,
+               username,
+               nickname,
+               phone,
+               email,
+               created_time,
+               updated_time,
+               pic,
+               wxid,
+               location,
+               sex,
+               created_by,
+               updated_by,
+               account_enable AS accountEnableCode,
+               CASE account_enable WHEN 0 THEN '不可用' WHEN 1 THEN '可用' END AS accountEnable,
+               account_non_expired AS accounNonExpiredCode,
+               CASE account_non_expired WHEN 0 THEN '账户过期' WHEN 1 THEN '账户未过期' END AS accounNonExpired,
+               credential_non_expired AS credentialNonExpiredCode,
+               CASE credential_non_expired WHEN 0 THEN '凭证过期' WHEN 1 THEN '凭证未过期' END AS credentialNonExpired,
+               account_non_lock AS accountNonLockCode,
+                CASE account_non_lock WHEN 0 THEN '账户锁定' WHEN 1 THEN '账户未锁定' END AS accountNonLock
+        FROM tb_user
+        WHERE id = #{uid}
+    </select>
+    <select id="getuserInfoPage" resultType="com.jaswine.uum.bean.vo.UserVO">
+        SELECT id,
+               username,
+               nickname,
+               phone,
+               email,
+               created_time,
+               updated_time,
+               pic,
+               wxid,
+               location,
+               sex,
+               created_by,
+               updated_by,
+               account_enable AS accountEnableCode,
+               CASE account_enable WHEN 0 THEN '不可用' WHEN 1 THEN '可用' END AS accountEnable,
+               account_non_expired AS accounNonExpiredCode,
+               CASE account_non_expired WHEN 0 THEN '账户过期' WHEN 1 THEN '账户未过期' END AS accounNonExpired,
+               credential_non_expired AS credentialNonExpiredCode,
+               CASE credential_non_expired WHEN 0 THEN '凭证过期' WHEN 1 THEN '凭证未过期' END AS credentialNonExpired,
+               account_non_lock AS accountNonLockCode,
+               CASE account_non_lock WHEN 0 THEN '账户锁定' WHEN 1 THEN '账户未锁定' END AS accountNonLock
+        FROM tb_user
+    </select>
+    <update id="changePassword">
+        UPDATE tb_user SET password = #{password} WHERE id = #{uid}
+    </update>
+</mapper>
+    

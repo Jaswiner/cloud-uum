@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jaswine.uum.mapper.RoleMapper">
+
+
+    <select id="getRoleByUserId" resultType="com.jaswine.commons.web.auth.pojo.AuthRole">
+        SELECT t.id,
+               t.en_name AS roleName
+        FROM tb_role t
+                 LEFT JOIN tb_user_role t1 ON t.id = t1.role_id
+        WHERE t1.user_id = #{id}
+    </select>
+    <select id="getAllRoles" resultType="com.jaswine.uum.bean.pojo.TbRole">
+        SELECT t.id,
+               t.cn_name,
+               t.en_name,
+               t.description
+        FROM tb_role t
+
+        <if test="asc == 0">
+            ORDER BY t.created_time DESC
+        </if>
+        <if test=" asc == 1">
+            ORDER BY t.created_time ASC
+        </if>
+    </select>
+</mapper>
+    

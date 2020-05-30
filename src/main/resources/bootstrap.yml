@@ -1,0 +1,101 @@
+
+# APP Property
+spring:
+  application:
+    name: CLOUD-UUM
+---
+
+server:
+  port: 18000
+  servlet:
+    context-path: /uum/
+
+---
+# nacos 配置
+spring:
+  cloud:
+    nacos:
+      config:
+        # 方便和服务发现分开,更能够体现性能
+        server-addr: jaswine.top:18848
+        file-extension: yaml
+        # DEV
+        namespace: b7ab9e87-f67d-4c19-8fa6-c3af840453f0
+        # TEST
+#        namespace: 070a6f4d-189c-48e9-958c-b774c2b9a1f8
+        # PRO
+#        namespace: d3c2ff2b-5740-40e4-9853-25cba1d1b3dc
+---
+# sentinel
+#spring:
+#  cloud:
+#    sentinel:
+#      transport:
+#        dashboard: 192.168.100.211:8080
+
+---
+# 数据源
+spring:
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      max-active: 10
+      initial-size: 5
+      min-idle: 2
+      max-wait: 60000
+      pool-prepared-statements: true
+      web-stat-filter:
+        enabled: true
+        url-pattern: /druid
+      stat-view-servlet:
+        url-pattern: /druid
+        login-username: cloud-uum
+        login-password: goodluck2019
+
+mybatis-plus:
+  mapper-locations: classpath:mappers/*.xml
+  check-config-location: true
+  type-aliases-package: com.lanswon.uum.bean
+  configuration:
+    jdbc-type-for-null: null
+    cache-enabled: false
+    multiple-result-sets-enabled: true
+    default-executor-type: reuse
+    lazy-loading-enabled: false
+    aggressive-lazy-loading: true
+    default-statement-timeout: 3000
+    call-setters-on-nulls: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+    auto-mapping-behavior: partial
+    auto-mapping-unknown-column-behavior: none
+    default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
+    return-instance-for-empty-row: false
+    local-cache-scope: session
+---
+#SpringBoot Devtools
+spring:
+  devtools:
+    restart:
+      additional-paths: src/main
+---
+# actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+      base-path: /actuator
+  server:
+    port: 18888
+---
+# 日志等级
+logging:
+  level:
+    com.alibaba.nacos.* : error
+  path: logs/cloud-uum/
+
+spring:
+  output:
+    ansi:
+      enabled: always

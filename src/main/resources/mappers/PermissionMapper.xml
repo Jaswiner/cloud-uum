@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jaswine.uum.mapper.PermissionMapper">
+
+
+    <select id="getMenusByRoleId" resultType="com.jaswine.uum.bean.vo.MenuTreeVO">
+        SELECT t.id,
+               t.parent_id,
+               t.url
+        FROM tb_permission t
+                 LEFT JOIN tb_role_permission t1 ON t1.permission_id = t.id
+        WHERE t.type = 1
+          AND t1.role_id = #{id}
+    </select>
+
+    <select id="getAllUrlByRid" resultType="com.jaswine.uum.bean.pojo.TbPermission">
+        SELECT t.id,
+               t.parent_id,
+               t.cn_name,
+               t.en_name,
+               t.method,
+               t.url,
+               t.type,
+               t.description
+        FROM tb_permission t
+                 LEFT JOIN tb_role_permission t1 ON t1.permission_id = t.id
+        WHERE t1.role_id = #{rid}
+    </select>
+
+    <select id="getPermissionTreeInfo" resultType="com.jaswine.uum.bean.vo.PermissionTreeVo">
+        SELECT t.id,
+               t.url,
+               t.parent_id AS pid,
+               t.cn_name   AS title
+        FROM tb_permission t
+    </select>
+
+    <select id="getPermissionPageInfo" resultType="com.jaswine.uum.bean.vo.page.PermissionPageVO">
+        SELECT a.id,
+               a.parent_id,
+               a1.cn_name  AS parent,
+               a.cn_name,
+               a.en_name,
+               a.method,
+               a.url,
+               a.type,
+               a.description,
+               a.created_time,
+               a.updated_time,
+               a2.nickname AS createdBy,
+               a3.nickname AS updatedBy
+        FROM (SELECT t.id,
+                     parent_id,
+                     cn_name,
+                     en_name,
+                     method,
+                     url,
+                     type,
+                     description,
+                     created_time,
+                     updated_time,
+                     created_by,
+                     updated_by
+              FROM tb_permission t) a
+                 LEFT JOIN tb_permission a1 ON a1.id = a.parent_id
+                 LEFT JOIN tb_user a2 ON a.created_by = a2.id
+                 LEFT JOIN tb_user a3 ON a.updated_by = a3.id
+
+        ORDER BY a.created_time ASC
+
+    </select>
+    <select id="getAllMenu" resultType="com.jaswine.uum.bean.vo.MenuTreeVO">
+        SELECT t.id,
+               t.url,
+               t.parent_id AS pid,
+               t.cn_name   AS name
+        FROM tb_permission t
+                 LEFT JOIN tb_role_permission t1 ON t1.permission_id = t.id
+                 LEFT JOIN tb_role t2 ON t2.id = t1.role_id
+                 LEFT JOIN tb_user_role t3 ON t3.role_id = t2.id
+        WHERE t.type = 1
+          AND t3.user_id = #{uid}
+    </select>
+    <select id="getAllMenuInfo" resultType="com.jaswine.uum.bean.vo.MenuTreeVO">
+        SELECT t.id,
+               t.url,
+               t.parent_id AS pid,
+               t.cn_name   AS name
+        FROM tb_permission t
+    </select>
+
+    <delete id="checkUserHasPermission">
+        SELECT count(t.id)
+        FROM tb_permission t
+                 LEFT JOIN tb_role_permission t1 ON t1.permission_id = t.id
+                 LEFT JOIN tb_role t2 ON t2.id = t1.role_id
+                 LEFT JOIN tb_user_role t3 ON t3.role_id = t2.id
+        WHERE t3.user_id = #{uid}
+          AND t.id = #{id}
+    </delete>
+
+    <select id="getButtonByPidAndUid" resultType="com.jaswine.uum.bean.vo.ButtonVO">
+        SELECT t.id,
+               t.cn_name AS name,
+               t.url,
+               t.type
+        FROM tb_permission t
+            LEFT JOIN tb_role_permission t1 ON t1.permission_id = t.id
+            LEFT JOIN tb_role t2 ON t1.role_id = t2.id
+            LEFT JOIN tb_user_role t3 ON t3.role_id = t2.id
+        WHERE t.type = 2
+          AND t3.user_id = #{uid}
+          AND t.parent_id = #{pid}
+    </select>
+
+</mapper>
+    
